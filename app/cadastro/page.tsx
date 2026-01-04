@@ -50,8 +50,14 @@ export default function CadastroPage() {
       const result = await registerUser(formData.name, formData.email, formData.phone, formData.password)
 
       if (result.success && result.user) {
-        saveUserSession(result.user)
-        router.push("/")
+        // Auto-login para criar cookie de sessão
+        const login = await import('@/lib/auth').then((m) => m.loginUser(formData.email, formData.password))
+        if (login.success && login.user) {
+          saveUserSession(login.user)
+          router.push("/")
+        } else {
+          setError('Cadastro realizado, mas não foi possível logar automaticamente. Faça login.')
+        }
       } else {
         setError(result.message)
       }

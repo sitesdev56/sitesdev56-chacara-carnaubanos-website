@@ -31,14 +31,18 @@ export default function AgendamentoPage() {
   })
 
   useEffect(() => {
-    const currentUser = getCurrentUser()
-    if (!currentUser) {
-      router.push("/login")
-      return
-    }
-    setUser(currentUser)
-    loadUserBookings(currentUser.id)
-    setBookedDates(getBookedDates())
+    ;(async () => {
+      const currentUser = await getCurrentUser()
+      if (!currentUser) {
+        router.push('/login')
+        return
+      }
+      setUser(currentUser)
+      const bookings = await getUserBookings()
+      setUserBookings(bookings)
+      const dates = await getBookedDates()
+      setBookedDates(dates)
+    })()
   }, [router])
 
   const loadUserBookings = (userId: string) => {
@@ -63,8 +67,7 @@ export default function AgendamentoPage() {
     setLoading(true)
 
     try {
-      const result = createBooking(
-        user,
+      const result = await createBooking(
         formData.date,
         formData.eventType,
         Number.parseInt(formData.guestCount),
@@ -72,12 +75,14 @@ export default function AgendamentoPage() {
       )
 
       if (result.success) {
-        setMessage({ type: "success", text: result.message })
-        setFormData({ date: "", eventType: "", guestCount: "", notes: "" })
-        loadUserBookings(user.id)
-        setBookedDates(getBookedDates())
+        setMessage({ type: 'success', text: result.message })
+        setFormData({ date: '', eventType: '', guestCount: '', notes: '' })
+        const bookings = await getUserBookings()
+        setUserBookings(bookings)
+        const dates = await getBookedDates()
+        setBookedDates(dates)
       } else {
-        setMessage({ type: "error", text: result.message })
+        setMessage({ type: 'error', text: result.message })
       }
     } catch (err) {
       setMessage({ type: "error", text: "Erro ao realizar agendamento. Tente novamente." })
@@ -92,13 +97,15 @@ export default function AgendamentoPage() {
     const confirmed = window.confirm("Tem certeza que deseja cancelar este agendamento?")
     if (!confirmed) return
 
-    const result = cancelBooking(bookingId, user.id)
+    const result = await cancelBooking(bookingId)
     if (result.success) {
-      setMessage({ type: "success", text: result.message })
-      loadUserBookings(user.id)
-      setBookedDates(getBookedDates())
+      setMessage({ type: 'success', text: result.message })
+      const bookings = await getUserBookings()
+      setUserBookings(bookings)
+      const dates = await getBookedDates()
+      setBookedDates(dates)
     } else {
-      setMessage({ type: "error", text: result.message })
+      setMessage({ type: 'error', text: result.message })
     }
   }
 
