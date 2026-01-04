@@ -46,36 +46,13 @@ export async function registerUser(
   phone: string,
   password: string,
 ): Promise<{ success: boolean; message: string; user?: UserSession }> {
-  const users = getUsers()
-
-  // Verificar se email já existe
-  if (users.some((u) => u.email === email)) {
-    return { success: false, message: "Email já cadastrado" }
-  }
-
-  // Criar novo usuário
-  const hashedPassword = await hashPassword(password)
-  const newUser: User = {
-    id: Date.now().toString(),
-    name,
-    email,
-    phone,
-    password: hashedPassword,
-    createdAt: new Date().toISOString(),
-  }
-
-  users.push(newUser)
-  saveUsers(users)
-
-  // Retornar sessão do usuário
-  const userSession: UserSession = {
-    id: newUser.id,
-    name: newUser.name,
-    email: newUser.email,
-    phone: newUser.phone,
-  }
-
-  return { success: true, message: "Cadastro realizado com sucesso", user: userSession }
+  const res = await fetch('/api/auth/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, phone, password }),
+  })
+  const data = await res.json()
+  return data
 }
 
 // Login de usuário
@@ -83,41 +60,26 @@ export async function loginUser(
   email: string,
   password: string,
 ): Promise<{ success: boolean; message: string; user?: UserSession }> {
-  const users = getUsers()
-  const user = users.find((u) => u.email === email)
-
-  if (!user) {
-    return { success: false, message: "Email ou senha incorretos" }
-  }
-
-  const isPasswordValid = await verifyPassword(password, user.password)
-
-  if (!isPasswordValid) {
-    return { success: false, message: "Email ou senha incorretos" }
-  }
-
-  // Retornar sessão do usuário
-  const userSession: UserSession = {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-  }
-
-  return { success: true, message: "Login realizado com sucesso", user: userSession }
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
+  const data = await res.json()
+  return data
 }
 
 // Obter usuário atual
-export function getCurrentUser(): UserSession | null {
-  if (typeof window === "undefined") return null
-  const user = localStorage.getItem("carnaubanos_user")
-  return user ? JSON.parse(user) : null
+export async function getCurrentUser(): Promise<UserSession | null> {
+  const res = await fetch('/api/auth/me')
+  const data = await res.json()
+  return data.success ? data.user : null
 }
 
-// Salvar sessão do usuário
+// Salvar sessão local opcional (mantém compatibilidade com UI)
 export function saveUserSession(user: UserSession): void {
   if (typeof window === "undefined") return
-  localStorage.setItem("carnaubanos_user", JSON.stringify(user))
+  localStorage.setItem('carnaubanos_user', JSON.stringify(user))
 }
 
 // Logout
