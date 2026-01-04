@@ -1,5 +1,4 @@
 module.exports = {
-  root: true,
   ignores: ['.next', 'node_modules', 'public', 'dist', 'build', '.env'],
   languageOptions: {
     ecmaVersion: 2020,
