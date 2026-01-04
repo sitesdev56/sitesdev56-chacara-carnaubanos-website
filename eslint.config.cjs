@@ -7,7 +7,8 @@ module.exports = [
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',
-      ecmaFeatures: { jsx: true }
+      ecmaFeatures: { jsx: true },
+      parser: require('@typescript-eslint/parser')
     },
     plugins: {
       '@typescript-eslint': require('@typescript-eslint/eslint-plugin'),
@@ -16,7 +17,6 @@ module.exports = [
     settings: {
       react: { version: 'detect' }
     },
-    parser: require('@typescript-eslint/parser'),
     extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:react/recommended', 'next/core-web-vitals'],
     rules: {
       'react/react-in-jsx-scope': 'off',
