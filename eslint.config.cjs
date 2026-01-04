@@ -1,7 +1,9 @@
+const { FlatCompat } = require('@eslint/eslintrc');
+const compat = new FlatCompat({});
+
 module.exports = [
-  {
-    ignores: ['.next', 'node_modules', 'public', 'dist', 'build', '.env']
-  },
+  { ignores: ['.next', 'node_modules', 'public', 'dist', 'build', '.env'] },
+  ...compat.extends('eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:react/recommended', 'next/core-web-vitals'),
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
@@ -17,7 +19,6 @@ module.exports = [
     settings: {
       react: { version: 'detect' }
     },
-    extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:react/recommended', 'next/core-web-vitals'],
     rules: {
       'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off'
