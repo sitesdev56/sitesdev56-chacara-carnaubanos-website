@@ -43,6 +43,14 @@ export default function AdminPage() {
       return
     }
 
+    const ADMIN_EMAIL = "diegoxiaomi56@gmail.com"
+
+if (!currentUser || currentUser.email !== ADMIN_EMAIL) {
+  router.push("/")
+  return
+}
+
+
     setUser(currentUser)
     loadAllBookings()
   }, [router])

@@ -1,0 +1,11 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/admin/page": "/admin",
+  "/agendamento/page": "/agendamento",
+  "/cadastro/page": "/cadastro",
+  "/galeria/page": "/galeria",
+  "/login/page": "/login",
+  "/page": "/",
+  "/sobre/page": "/sobre"
+}
